@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>NOVA MAX AI</title>
+
+  <meta
+    name="description"
+    content="NOVA MAX AI - 나만의 AI 반려 로봇"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          #163c52 0%,
+          #07131d 42%,
+          #03070b 100%
+        );
+
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 배경 빛 */
+    body::before {
+      content: "";
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      left: 50%;
+      top: -250px;
+      transform: translateX(-50%);
+
+      background: #00e5ff;
+      opacity: 0.08;
+      filter: blur(120px);
+
+      pointer-events: none;
+    }
+
+    header {
+      width: 100%;
+      padding: 22px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      position: sticky;
+      top: 0;
+      z-index: 10;
+
+      background: rgba(3, 7, 11, 0.65);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .logo span {
+      color: #00e5ff;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    nav a {
+      color: #b9c6ce;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: white;
+    }
+
+    /* Hero */
+
+    .hero {
+      min-height: 85vh;
+      padding: 90px 7% 70px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+    }
+
+    .badge {
+      padding: 8px 15px;
+      border-radius: 999px;
+
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.2);
+
+      color: #6eefff;
+      font-size: 13px;
+
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-size: clamp(45px, 9vw, 90px);
+      line-height: 0.95;
+      letter-spacing: -4px;
+
+      background:
+        linear-gradient(
+          120deg,
+          #ffffff,
+          #7cefff,
+          #b98cff,
+          #ffffff
+        );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+
+      animation: gradientMove 5s linear infinite;
+      background-size: 250% 100%;
+    }
+
+    @keyframes gradientMove {
+      0% {
+        background-position: 0%;
+      }
+
+      100% {
+        background-position: 250%;
+      }
+    }
+
+    .subtitle {
+      max-width: 650px;
+      margin-top: 30px;
+
+      color: #aebdc7;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .buttons {
+      margin-top: 38px;
+
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .button {
+      padding: 15px 24px;
+      border-radius: 18px;
+
+      text-decoration: none;
+      font-weight: 700;
+
+      transition: 0.25s;
+    }
+
+    .primary {
+      background: white;
+      color: #07131d;
+    }
+
+    .primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(255,255,255,0.2);
+    }
+
+    .secondary {
+      color: white;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .secondary:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* NOVA Face */
+
+    .nova-face {
+      width: min(650px, 90vw);
+      height: 280px;
+
+      margin-top: 70px;
+
+      border-radius: 55px;
+
+      background:
+        radial-gradient(
+          ellipse at center,
+          #0e2634,
+          #03090e 70%
+        );
+
+      border: 1px solid rgba(0,229,255,0.15);
+
+      box-shadow:
+        0 0 70px rgba(0,229,255,0.08),
+        inset 0 0 70px rgba(0,229,255,0.04);
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eyes {
+      display: flex;
+      gap: 80px;
+    }
+
+    .eye {
+      width: 90px;
+      height: 100px;
+
+      border-radius: 45%;
+
+      background:
+        radial-gradient(
+          circle,
+          #ffffff 0%,
+          #00e5ff 35%,
+          #007bff 70%,
+          transparent 72%
+        );
+
+      filter:
+        drop-shadow(0 0 18px #00e5ff)
+        drop-shadow(0 0 35px rgba(0,229,255,0.5));
+
+      animation: breathe 2.8s ease-in-out infinite;
+    }
+
+    .eye:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scaleY(0.92);
+      }
+
+      50% {
+        transform: scaleY(1);
+      }
+    }
+
+    .quantum-beam {
+      width: 270px;
+      height: 24px;
+
+      margin-top: 38px;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          #00e5ff,
+          #a855f7,
+          #00e5ff,
+          transparent
+        );
+
+      filter:
+        blur(1px)
+        drop-shadow(0 0 12px #00e5ff)
+        drop-shadow(0 0 28px #8b5cf6);
+
+      animation: beam 1.5s ease-in-out infinite;
+    }
+
+    @keyframes beam {
+      0%, 100% {
+        transform: scaleX(0.75);
+        opacity: 0.65;
+      }
+
+      50% {
+        transform: scaleX(1);
+        opacity: 1;
+      }
+    }
+
+    /* Bento */
+
+    .section {
+      width: min(1100px, 90%);
+      margin: auto;
+      padding: 70px 0;
+    }
+
+    .section-title {
+      font-size: 32px;
+      margin-bottom: 25px;
+      letter-spacing: -1px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      padding: 28px;
+      min-height: 180px;
+
+      border-radius: 30px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,0.09),
+          rgba(255,255,255,0.035)
+        );
+
+      border: 1px solid rgba(255,255,255,0.08);
+
+      backdrop-filter: blur(20px);
+
+      transition:
+        transform 0.3s,
+        border-color 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0,229,255,0.3);
+    }
+
+    .card.large {
+      grid-column: span 2;
+    }
+
+    .icon {
+      font-size: 30px;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      font-size: 21px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #a8b5bd;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* 기능 */
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .feature {
+      padding: 22px;
+
+      border-radius: 24px;
+
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .feature strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .feature span {
+      color: #8e9ca5;
+      font-size: 13px;
+    }
+
+    /* 다운로드 */
+
+    .download {
+      text-align: center;
+
+      padding: 70px 30px;
+
+      border-radius: 40px;
+
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(0,229,255,0.13),
+          transparent 60%
+        );
+
+      border: 1px solid rgba(0,229,255,0.12);
+    }
+
+    .download h2 {
+      font-size: 36px;
+      margin-bottom: 15px;
+    }
+
+    .download p {
+      color: #9eabb4;
+      margin-bottom: 28px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px 20px;
+
+      color: #66747d;
+      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+
+      nav {
+        display: none;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card.large {
+        grid-column: span 1;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .eyes {
+        gap: 45px;
+      }
+
+      .eye {
+        width: 65px;
+        height: 75px;
+      }
+
+      .nova-face {
+        height: 230px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    NOVA <span>MAX</span>
+  </div>
+
+  <nav>
+    <a href="#features">기능</a>
+    <a href="#ai">AI</a>
+    <a href="#download">다운로드</a>
+  </nav>
+
+</header>
+
+
+<main>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="badge">
+      🤖 NOVA MAX AI
+    </div>
+
+    <h1>
+      NOVA<br>
+      MAX
+    </h1>
+
+    <p class="subtitle">
+      나만의 AI 반려 로봇.<br>
+      보고, 듣고, 기억하고, 대화하며
+      당신과 함께 성장합니다.
+    </p>
+
+    <div class="buttons">
+
+      <!-- APK 링크는 나중에 교체 -->
+      <a
+        class="button primary"
+        href="#download"
+      >
+        📱 APK 다운로드
+      </a>
+
+      <a
+        class="button secondary"
+        href="#features"
+      >
+        NOVA 알아보기
+      </a>
+
+    </div>
+
+
+    <!-- NOVA FACE -->
+
+    <div class="nova-face">
+
+      <div class="eyes">
+
+        <div class="eye"></div>
+        <div class="eye"></div>
+
+      </div>
+
+      <div class="quantum-beam"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- BENTO -->
+
+  <section class="section" id="ai">
+
+    <h2 class="section-title">
+      NOVA는 이런 AI입니다
+    </h2>
+
+    <div class="grid">
+
+      <div class="card large">
+
+        <div class="icon">🧠</div>
+
+        <h3>
+          Adaptive AI
+        </h3>
+
+        <p>
+          기기의 AI 능력과 네트워크 상태를 확인해
+          가능한 경우 온디바이스 AI를 사용하고,
+          필요하면 클라우드 AI로 전환합니다.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="icon">👁️</div>
+
+        <h3>
+          Look-to-Talk
+        </h3>
+
+        <p>
+          얼굴을 바라보면 NOVA가 사용자를 인식하고
+          자연스럽게 대화를 시작합니다.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="icon">💬</div>
+
+        <h3>
+          대화 기억
+        </h3>
+
+        <p>
+          이전 대화의 맥락을 활용하여
+          더욱 자연스러운 대화를 만들어갑니다.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="icon">🔊</div>
+
+        <h3>
+          NOVA Voice
+        </h3>
+
+        <p>
+          TTS와 입 애니메이션이 연결되어
+          말하는 순간 NOVA의 얼굴도 함께 반응합니다.
+        </p>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="icon">🌦️</div>
+
+        <h3>
+          감정 & 날씨
+        </h3>
+
+        <p>
+          날씨와 상황에 따라 NOVA의 감정과
+          화면 연출이 달라집니다.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FEATURES -->
+
+  <section class="section" id="features">
+
+    <h2 class="section-title">
+      주요 기능
+    </h2>
+
+    <div class="features">
+
+      <div class="feature">
+        <strong>👁️ 얼굴 인식</strong>
+        <span>카메라를 이용한 사용자 인식</span>
+      </div>
+
+      <div class="feature">
+        <strong>🧠 AI 대화</strong>
+        <span>Gemini 및 온디바이스 AI 구조</span>
+      </div>
+
+      <div class="feature">
+        <strong>💾 Memory</strong>
+        <span>대화 맥락 기억</span>
+      </div>
+
+      <div class="feature">
+        <strong>🔊 TTS</strong>
+        <span>자연스러운 음성 출력</span>
+      </div>
+
+      <div class="feature">
+        <strong>👄 Quantum Beam</strong>
+        <span>말할 때 나타나는 에너지 애니메이션</span>
+      </div>
+
+      <div class="feature">
+        <strong>😴 Sleep Mode</strong>
+        <span>상황에 따른 자동 수면 및 복귀</span>
+      </div>
+
+      <div class="feature">
+        <strong>🌦️ Weather Link</strong>
+        <span>날씨와 감정 연동</span>
+      </div>
+
+      <div class="feature">
+        <strong>✨ OLED Face</strong>
+        <span>눈 추적과 감정 표현</span>
+      </div>
+
+      <div class="feature">
+        <strong>🌀 DIZZY</strong>
+        <span>특수 감정 애니메이션</span>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- DOWNLOAD -->
+
+  <section class="section" id="download">
+
+    <div class="download">
+
+      <h2>
+        NOVA MAX를 만나보세요
+      </h2>
+
+      <p>
+        Android 스마트폰에서 NOVA MAX를 시작하세요.
+      </p>
+
+      <!-- APK 링크를 GitHub Release 주소로 교체 -->
+      <a
+        class="button primary"
+        href="#"
+        onclick="downloadAPK()"
+      >
+        📱 NOVA MAX APK 다운로드
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+
+  <p>
+    © 2026 NOVA MAX AI
+  </p>
+
+  <p style="margin-top:8px;">
+    Built for NOVA.
+  </p>
+
+</footer>
+
+
+<script>
+
+  function downloadAPK() {
+
+    /*
+      나중에 GitHub Release APK 주소로 변경하세요.
+
+      예:
+      const apkURL =
+        "https://github.com/fingko0102/NOVA-MAX/releases/latest/download/NOVA-MAX.apk";
+    */
+
+    const apkURL = "#";
+
+    if (apkURL === "#") {
+
+      alert(
+        "APK 다운로드 주소가 아직 설정되지 않았습니다."
+      );
+
+      return;
+    }
+
+    window.location.href = apkURL;
+  }
+
+</script>
+
+</body>
+  </html>
